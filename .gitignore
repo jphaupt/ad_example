@@ -1,0 +1,6 @@
+functions_to_minimize.c
+functions_to_minimize.mod
+functions_to_minimize.o
+pyfunctions_to_minimize.c
+*.so
+*.o
