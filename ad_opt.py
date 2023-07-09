@@ -1,15 +1,29 @@
 # NOTE: at the moment I do not take advantage of GPU acceleration
 import tensorflow as tf
 
-def minimize_function(f, initial_vector, learning_rate=0.1, num_iterations=100):
+import tensorflow as tf
+
+def minimize_function(f, initial_vector, learning_rate=0.1, num_iterations=100, tol=1.e-5, wobble=5):
+    acc = 0
     vector = tf.Variable(initial_vector, dtype=tf.float32)
     optimizer = tf.optimizers.SGD(learning_rate)
 
-    for _ in range(num_iterations):
+    previous_value = float('inf')  # Initialize previous value to a large number
+
+    for iteration in range(num_iterations):
         with tf.GradientTape() as tape:
             value = f(vector)
         gradients = tape.gradient(value, vector)
         optimizer.apply_gradients([(gradients, vector)])
+
+        if iteration > 0 and abs(value - previous_value) < tol:
+            acc += 1
+            if acc > wobble:
+                break
+
+        previous_value = value
+
+        print("Iteration: ", iteration, "; value: ", value.numpy())
 
     return value.numpy(), vector.numpy()
 
